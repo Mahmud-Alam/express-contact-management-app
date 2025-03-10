@@ -3,15 +3,15 @@ const Contact = require("../models/contactModel");
 
 // @desc Get all contacts
 // @route GET /api/contacts
-// @access public
+// @access private
 const getContacts = asyncHandler(async (req, res) => {
-  const contacts = await Contact.find();
+  const contacts = await Contact.find({ user_id: req.user.id });
   res.status(200).json(contacts);
 });
 
 // @desc Get contact
 // @route GET /api/contacts/:id
-// @access public
+// @access private
 const getContact = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const contact = await Contact.findById(id);
@@ -19,13 +19,13 @@ const getContact = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("No contact is found with this ID!");
   }
-  
+
   res.status(200).json(contact);
 });
 
 // @desc Create new contact
 // @route POST /api/contacts
-// @access public
+// @access private
 const createContact = asyncHandler(async (req, res) => {
   const { name, email, phone } = req.body;
   if (!name || !email || !phone) {
@@ -37,6 +37,7 @@ const createContact = asyncHandler(async (req, res) => {
     name,
     email,
     phone,
+    user_id: req.user.id
   });
 
   res.status(201).json(contact);
@@ -44,7 +45,7 @@ const createContact = asyncHandler(async (req, res) => {
 
 // @desc Update contact
 // @route PUT /api/contacts/:id
-// @access public
+// @access private
 const updateContact = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const contact = await Contact.findById(id);
@@ -62,7 +63,7 @@ const updateContact = asyncHandler(async (req, res) => {
 
 // @desc Delete contact
 // @route DELETE /api/contacts/:id
-// @access public
+// @access private
 const deleteContact = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const contact = await Contact.findById(id);
